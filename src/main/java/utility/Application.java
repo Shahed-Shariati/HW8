@@ -3,15 +3,20 @@ package utility;
 
 
 import database.DatabaseConnection;
+import model.Category;
 import model.Customer;
 import model.User;
+import service.AdministratorService;
+import service.CategoryService;
 import service.CustomerService;
 import service.UserService;
 
 import java.sql.Connection;
 import static utility.Menu.*;
 
+import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.List;
 import java.util.Scanner;
 
 public class Application {
@@ -19,6 +24,8 @@ public class Application {
     private Connection connection = DatabaseConnection.getInstance().getConnection();
     private UserService userService = new UserService(connection);
     private CustomerService customerService = new CustomerService(connection);
+    private AdministratorService administratorService = new AdministratorService(connection);
+    private CategoryService categoryService = new CategoryService(connection);
 
     public Application() {
 
@@ -54,7 +61,7 @@ public class Application {
             }else if(input.length == 2){
                User user = userService.login(input[0],input[1]);
                 if(user.getRole() == 1){
-
+                   administratorMenu();
                 }else if(user.getRole() == 2){
                     System.out.println("customer");
                 }
@@ -66,6 +73,8 @@ public class Application {
             System.out.println("your input is wrong");
         }catch (UserNotFoundException e){
             System.out.println("there is no user with this username");
+        }catch (NullPointerException e){
+            System.out.println();
         }
 
     }
@@ -104,6 +113,71 @@ public class Application {
         }catch (NumberFormatException e){
             System.out.println("-------------your role or balance is wrong----------------");
         }
+
+    }
+
+    private void administratorMenu(){
+        while (true){
+           adminMenu();
+            String input = getUserInput();
+            switch (input){
+                case "1":
+                    break;
+                case "2":
+                    break;
+                case "3":
+                    addCategory();
+                    break;
+                case "4":
+                   addSubCategory();
+                    break;
+                case "5":
+                    return;
+            }
+        }
+    }
+
+
+    private void addCategory(){
+        System.out.println("Enter your category name:");
+        String categoryName = getUserInput();
+        if(categoryName.equalsIgnoreCase("Back")){
+            System.out.println();
+        }else {
+            try{
+                administratorService.saveCategoryParent("1", categoryName);
+            }catch (NumberFormatException e){
+                System.out.println("Id is wrong");
+            }
+        }
+    }
+    private void addSubCategory(){
+        showCategory();
+        System.out.println("Choice your parent category");
+        String parentId = getUserInput();
+        System.out.println("Enter your category name");
+        String categoryName = getUserInput();
+        try{
+             administratorService.saveSubCategory("1",categoryName,parentId);
+        }catch (NumberFormatException e){
+            System.out.println("id is wrong");
+        }catch (CategoryParentNotFound e){
+            System.out.println(" Parent Category is not found");
+        }
+
+
+    }
+    private void showCategory(){
+        try {
+            List<Category> categories = categoryService.findAll();
+            for (Category item:categories) {
+                System.out.println(item);
+
+            }
+        }catch (CategoryListNotFound e){
+            System.out.println("List Not Found");
+        }
+
 
     }
     private String getUserInput() {

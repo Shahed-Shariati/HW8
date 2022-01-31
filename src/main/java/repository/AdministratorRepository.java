@@ -1,17 +1,17 @@
 package repository;
 
-import model.Adminstrator;
+import model.Administrator;
 
 import java.util.List;
 
-public class AdministratorRepository implements Repository<Adminstrator>{
+public class AdministratorRepository implements Repository<Administrator>{
     @Override
-    public int save(Adminstrator adminstrator) {
+    public int save(Administrator administrator) {
         return 0;
     }
 
     @Override
-    public void upDate(Adminstrator adminstrator) {
+    public void upDate(Administrator administrator) {
 
     }
 
@@ -21,12 +21,12 @@ public class AdministratorRepository implements Repository<Adminstrator>{
     }
 
     @Override
-    public Adminstrator find(int id) {
+    public Administrator find(int id) {
         return null;
     }
 
     @Override
-    public List<Adminstrator> findAll() {
+    public List<Administrator> findAll() {
         return null;
     }
 }

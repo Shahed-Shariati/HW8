@@ -11,7 +11,8 @@ public class CreateTable {
     //createTableRole();
    // createTableUser();
   //  insertIntoRole();
-        createTableCustomer();
+  //      createTableCustomer();
+        createTableCategory();
 
     }
 
@@ -88,7 +89,22 @@ public class CreateTable {
     }
 
 
-
+   private void createTableCategory(){
+        String query = """
+                 CREATE TABLE IF NOT EXISTS category(
+                 id SERIAL PRIMARY KEY,
+                 ctaegory_name VARCHAR (50),
+                 category_id INTEGER ,
+                 FOREIGN KEY (category_id) REFERENCES  category(id) ON DELETE CASCADE 
+                 );
+                """;
+       try {
+           preparedStatement = connection.prepareStatement(query);
+           preparedStatement.execute();
+       } catch (SQLException e) {
+           e.printStackTrace();
+       }
+   }
 
 
 
