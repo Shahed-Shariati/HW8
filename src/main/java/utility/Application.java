@@ -4,18 +4,12 @@ package utility;
 
 import database.DatabaseConnection;
 import model.Category;
-import model.Customer;
 import model.User;
-import service.AdministratorService;
-import service.CategoryService;
-import service.CustomerService;
-import service.UserService;
+import service.*;
 
 import java.sql.Connection;
 import static utility.Menu.*;
 
-import java.sql.SQLException;
-import java.text.ParseException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -26,6 +20,7 @@ public class Application {
     private CustomerService customerService = new CustomerService(connection);
     private AdministratorService administratorService = new AdministratorService(connection);
     private CategoryService categoryService = new CategoryService(connection);
+    private ProductService productService = new ProductService(connection);
 
     public Application() {
 
@@ -122,6 +117,7 @@ public class Application {
             String input = getUserInput();
             switch (input){
                 case "1":
+                   addProduct();
                     break;
                 case "2":
                     break;
@@ -152,7 +148,7 @@ public class Application {
         }
     }
     private void addSubCategory(){
-        showCategory();
+        showParentCategory();
         System.out.println("Choice your parent category");
         String parentId = getUserInput();
         System.out.println("Enter your category name");
@@ -167,7 +163,7 @@ public class Application {
 
 
     }
-    private void showCategory(){
+    private void showParentCategory(){
         try {
             List<Category> categories = categoryService.findAll();
             for (Category item:categories) {
@@ -179,6 +175,41 @@ public class Application {
         }
 
 
+    }
+    private void addProduct(){
+        System.out.println("Enter product name");
+        String name = getUserInput();
+        System.out.println("Enter price");
+        String price = getUserInput();
+        System.out.println("Enter stock");
+        String stock = getUserInput();
+        showSubCategory();
+        System.out.println("Choice category");
+        String categoryId = getUserInput();
+        try {
+         productService.save(name,price,stock,categoryId);
+        }catch (NumberFormatException e){
+            System.out.println("input is wrong");
+        }catch (CategoryNotFound e){
+            System.out.println("Category not found");
+        }
+
+
+    }
+    private void showSubCategory(){
+        try {
+            List<Category> categories = categoryService.findSubCategory();
+            for (Category item:categories) {
+                System.out.println(item);
+
+            }
+        }catch (CategoryListNotFound e){
+            System.out.println("List Not Found");
+        }
+    }
+
+    private void editProduct(){
+        
     }
     private String getUserInput() {
         return input.nextLine().trim();

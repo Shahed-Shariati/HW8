@@ -87,7 +87,26 @@ public class CategoryRepository implements Repository<Category>{
     public List<Category> findAll() {
         String query = """
                 SELECT * FROM category
-                WHERE category_id is null ;
+                WHERE category_id is  null ;
+                """;
+        try {
+            preparedStatement = connection.prepareStatement(query);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            List<Category> categories = new ArrayList<>();
+            while (resultSet.next()){
+                categories.add(new Category(resultSet.getInt(1),
+                        resultSet.getString(2)));
+            }
+            return categories;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    public List<Category> findSubCategory(){
+        String query = """
+                SELECT * FROM category
+                WHERE category_id is NOT NULL ;
                 """;
         try {
             preparedStatement = connection.prepareStatement(query);

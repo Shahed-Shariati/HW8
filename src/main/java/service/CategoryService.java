@@ -3,6 +3,7 @@ package service;
 import model.Category;
 import repository.CategoryRepository;
 import utility.CategoryListNotFound;
+import utility.CategoryNotFound;
 import utility.CategoryParentNotFound;
 
 import java.sql.Connection;
@@ -40,5 +41,21 @@ public class CategoryService {
            throw new CategoryListNotFound("Category List not found");
        }
        return categories;
+    }
+    public List<Category> findSubCategory(){
+        List<Category> categories =  categoryRepository.findSubCategory();
+        if(categories == null){
+            throw new CategoryListNotFound("Category List not found");
+        }
+        return categories;
+    }
+    public Category find(String id){
+
+        int idInt = Integer.parseInt(id);
+        Category category =   categoryRepository.find(idInt);
+        if(category == null){
+            throw new CategoryNotFound("not found");
+        }
+        return category;
     }
 }

@@ -11,8 +11,9 @@ public class CreateTable {
     //createTableRole();
    // createTableUser();
   //  insertIntoRole();
-  //      createTableCustomer();
-        createTableCategory();
+  //  createTableCustomer();
+   // createTableCategory();
+      createTableProduct();
 
     }
 
@@ -97,6 +98,25 @@ public class CreateTable {
                  category_id INTEGER ,
                  FOREIGN KEY (category_id) REFERENCES  category(id) ON DELETE CASCADE 
                  );
+                """;
+       try {
+           preparedStatement = connection.prepareStatement(query);
+           preparedStatement.execute();
+       } catch (SQLException e) {
+           e.printStackTrace();
+       }
+   }
+
+   private void createTableProduct(){
+        String query = """
+                  CREATE TABLE IF NOT EXISTS product(
+                  id SERIAL PRIMARY KEY,
+                  product_name VARCHAR(70), 
+                  price DOUBLE PRECISION,
+                  stock INTEGER ,
+                  category_id INTEGER ,
+                  FOREIGN KEY (category_id) REFERENCES category(id) ON DELETE CASCADE 
+                  );     
                 """;
        try {
            preparedStatement = connection.prepareStatement(query);
