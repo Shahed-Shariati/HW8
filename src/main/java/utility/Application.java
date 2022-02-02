@@ -3,10 +3,7 @@ package utility;
 
 
 import database.DatabaseConnection;
-import model.Category;
-import model.Customer;
-import model.Product;
-import model.User;
+import model.*;
 import service.*;
 
 import java.sql.Connection;
@@ -23,6 +20,7 @@ public class Application {
     private AdministratorService administratorService = new AdministratorService(connection);
     private CategoryService categoryService = new CategoryService(connection);
     private ProductService productService = new ProductService(connection);
+    private ShoppingService shoppingService = new ShoppingService(connection);
 
     public Application() {
 
@@ -155,6 +153,7 @@ public class Application {
                    showParentCategory();
                     break;
                 case "2":
+                    addProductToShoppingCart(customer);
                     break;
                 case "3":
                     break;
@@ -287,7 +286,25 @@ public class Application {
       }
 
     }
+     private void addProductToShoppingCart(Customer customer){
 
+        ShoppingCart shoppingCart = new ShoppingCart(null,customer,0);
+        customer.getShoppingCarts().add(shoppingCart);
+        int shoppingCartId = shoppingService.save(shoppingCart);
+        while (true) {
+            showParentCategory();
+            showProductsByCategory();
+            System.out.println("you want continue Y/n");
+            String input = getUserInput();
+            if(input.equalsIgnoreCase("n")){
+                return;
+            }
+        }
+     }
+
+     private void addShoppingCart(){
+
+     }
     private String getUserInput() {
         return input.nextLine().trim();
     }

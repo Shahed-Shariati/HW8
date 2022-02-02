@@ -14,7 +14,7 @@ public class CreateTable {
   //  createTableCustomer();
    // createTableCategory();
     //  createTableProduct();
-    //    createTableShoppingCart();
+        createTableShoppingCart();
          createTableItemCart();
     }
 
@@ -132,7 +132,7 @@ public class CreateTable {
                   CREATE TABLE IF NOT EXISTS Shopping(
                   id SERIAL PRIMARY KEY,
                   customer_id INTEGER , 
-                  sum DOUBLE PRECISION,
+                  total DOUBLE PRECISION,
                   FOREIGN KEY (customer_id) REFERENCES customer(id) ON DELETE CASCADE 
                   );     
                 """;
@@ -152,6 +152,7 @@ public class CreateTable {
                   product_id INTEGER , 
                   cart_id INTEGER ,
                   quantity INTEGER ,
+                  sum DOUBLE PRECISION,
                   FOREIGN KEY (product_id) REFERENCES product(id) ON DELETE CASCADE, 
                   FOREIGN KEY (cart_id) REFERENCES shopping(id) ON DELETE CASCADE 
                   );     
