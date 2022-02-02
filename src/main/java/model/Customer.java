@@ -3,9 +3,10 @@ package model;
 public class Customer extends User{
     private int id;
     private double balance;
-    public Customer(int id, int role, String firstName, String lastName, String phoneNumber, String address, String userName, String passWord,double balance) {
+    public Customer(int id, int role, String firstName, String lastName, String phoneNumber, String address, String userName, String passWord,double balance,int customerid) {
         super(id, role, firstName, lastName, phoneNumber, address, userName, passWord);
         this.balance = balance;
+        this.id = customerid;
     }
 
 

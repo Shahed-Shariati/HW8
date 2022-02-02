@@ -38,11 +38,20 @@ public class UserRepository implements Repository<User>{
         }
 
         return 0;
+
     }
 
     @Override
     public void upDate(User user) {
-
+      String query = "UPDATE users set username = ? , password = ? ; ";
+        try {
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1,user.getUserName());
+            preparedStatement.setString(2,user.getPassWord());
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

@@ -48,7 +48,12 @@ public class UserService implements Service<User>{
     }
 
     @Override
-    public List<User> findAll(int id) {
+    public List<User> findAll() {
         return null;
+    }
+
+    @Override
+    public void upDate(User user) {
+
     }
 }

@@ -13,8 +13,9 @@ public class CreateTable {
   //  insertIntoRole();
   //  createTableCustomer();
    // createTableCategory();
-      createTableProduct();
-
+    //  createTableProduct();
+    //    createTableShoppingCart();
+         createTableItemCart();
     }
 
 
@@ -126,10 +127,42 @@ public class CreateTable {
        }
    }
 
+    private void createTableShoppingCart(){
+        String query = """
+                  CREATE TABLE IF NOT EXISTS Shopping(
+                  id SERIAL PRIMARY KEY,
+                  customer_id INTEGER , 
+                  sum DOUBLE PRECISION,
+                  FOREIGN KEY (customer_id) REFERENCES customer(id) ON DELETE CASCADE 
+                  );     
+                """;
+        try {
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
 
-
-
+    private void createTableItemCart(){
+        String query = """
+                  CREATE TABLE IF NOT EXISTS itemcart(
+                  id SERIAL PRIMARY KEY,
+                  product_id INTEGER , 
+                  cart_id INTEGER ,
+                  quantity INTEGER ,
+                  FOREIGN KEY (product_id) REFERENCES product(id) ON DELETE CASCADE, 
+                  FOREIGN KEY (cart_id) REFERENCES shopping(id) ON DELETE CASCADE 
+                  );     
+                """;
+        try {
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
 
 

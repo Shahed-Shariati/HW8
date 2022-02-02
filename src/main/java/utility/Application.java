@@ -4,6 +4,8 @@ package utility;
 
 import database.DatabaseConnection;
 import model.Category;
+import model.Customer;
+import model.Product;
 import model.User;
 import service.*;
 
@@ -58,7 +60,13 @@ public class Application {
                 if(user.getRole() == 1){
                    administratorMenu();
                 }else if(user.getRole() == 2){
-                    System.out.println("customer");
+                    try{
+                        Customer customer = customerService.findByUserId(user.getId());
+                        customerMenu(customer);
+                    }catch (UserNotFoundException e){
+                        System.out.println(e.getMessage());
+                    }
+
                 }
 
             }else {
@@ -69,7 +77,7 @@ public class Application {
         }catch (UserNotFoundException e){
             System.out.println("there is no user with this username");
         }catch (NullPointerException e){
-            System.out.println();
+            System.out.println("nullpoint ");
         }
 
     }
@@ -120,6 +128,8 @@ public class Application {
                    addProduct();
                     break;
                 case "2":
+                    showParentCategory();
+                    editProduct();
                     break;
                 case "3":
                     addCategory();
@@ -128,12 +138,33 @@ public class Application {
                    addSubCategory();
                     break;
                 case "5":
+                   showParentCategory();
+                   showProductsByCategory();
+                case "6":
                     return;
             }
         }
     }
 
-
+   private void customerMenu(Customer customer){
+        while (true){
+            Menu.customerMenu();
+            String input = getUserInput();
+            switch (input){
+                case "1":
+                   showParentCategory();
+                    break;
+                case "2":
+                    break;
+                case "3":
+                    break;
+                case "4":
+                    break;
+                case "5":
+                    return;
+            }
+        }
+   }
     private void addCategory(){
         System.out.println("Enter your category name:");
         String categoryName = getUserInput();
@@ -209,8 +240,54 @@ public class Application {
     }
 
     private void editProduct(){
-        
+      showProductsByCategory();
+      try {
+          System.out.println("choice id product to edit");
+          int productId = Integer.parseInt(getUserInput());
+          Product product = productService.find(productId);
+          System.out.println("Enter stock");
+           int stock =Integer.parseInt(getUserInput());
+          System.out.println("Enter new Price");
+          double price = Double.parseDouble(getUserInput());
+          product.setPrice(price);
+             product.setStock(product.getStock()+stock);
+             productService.upDate(product);
+      }catch (NumberFormatException e){
+          System.out.println("Id or stock is wrong");
+      }catch (ProductNotFound e){
+          System.out.println("product not found");
+      }
     }
+    private void showProductsByCategory(){
+        try{
+            System.out.println("choice id category");
+            String categoryId = getUserInput();
+            int intId = Integer.parseInt(categoryId);
+            List<Product> products =  productService.findAllByCategoryId(intId);
+            for (Product item:products) {
+                System.out.println(item);
+
+            }
+        }catch (NumberFormatException e){
+            System.out.println("category id is wrong");
+        }catch (ProductListNotFoundException e){
+            System.out.println(e.getMessage());
+        }
+    }
+    private void showProducts(){
+      List<Product> products =  productService.findAll();
+      if(products != null)
+      {
+          for (Product item:products) {
+              System.out.println(item);
+
+          }
+      }else {
+          System.out.println("list is empty");
+      }
+
+    }
+
     private String getUserInput() {
         return input.nextLine().trim();
     }
