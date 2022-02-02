@@ -1,12 +1,12 @@
 package utility;
 
-public class ProductNotFound extends RuntimeException{
+public class ProductNotFoundException extends RuntimeException{
     final private String message = "Product not found";
-    public ProductNotFound(String message) {
+    public ProductNotFoundException(String message) {
         super(message);
     }
 
-    public ProductNotFound() {
+    public ProductNotFoundException() {
     }
 
     @Override

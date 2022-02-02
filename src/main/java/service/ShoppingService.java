@@ -2,6 +2,8 @@ package service;
 
 import model.ShoppingCart;
 import repository.ShoppingCartRepository;
+import utility.ShoppingCartListNotFound;
+import utility.ShoppingCartNotFound;
 
 import java.sql.Connection;
 import java.util.List;
@@ -9,10 +11,12 @@ import java.util.List;
 public class ShoppingService implements Service<ShoppingCart>{
     private Connection connection;
     private ShoppingCartRepository shoppingCartRepository;
+    private ItemCartService itemCartService;
 
     public ShoppingService(Connection connection) {
         this.connection = connection;
         this.shoppingCartRepository = new ShoppingCartRepository(connection);
+        this.itemCartService = new ItemCartService(connection);
     }
 
 
@@ -20,7 +24,12 @@ public class ShoppingService implements Service<ShoppingCart>{
 
     @Override
     public ShoppingCart find(int id) {
-        return null;
+        ShoppingCart shoppingCart = shoppingCartRepository.find(id);
+        if(shoppingCart == null || shoppingCart.getId() ==0){
+            throw new ShoppingCartNotFound();
+        }
+        shoppingCart.setItemCarts(itemCartService.findAllByShoppingCartId(id));
+        return shoppingCart;
     }
 
     @Override
@@ -35,6 +44,13 @@ public class ShoppingService implements Service<ShoppingCart>{
     public int save(ShoppingCart shoppingCart){
         return  shoppingCartRepository.save(shoppingCart);
     }
-
+    public List<ShoppingCart> findByCustomerId(int id){
+        List<ShoppingCart> shoppingCart = shoppingCartRepository.findByCustomerId(id);
+        if(shoppingCart == null || shoppingCart.size() == 0)
+        {
+            throw new ShoppingCartListNotFound();
+        }
+        return shoppingCart;
+    }
 
 }

@@ -28,4 +28,18 @@ public class Menu {
         System.out.println("4:confirm");
         System.out.println("5:Exit");
     }
+
+    public static void editRemove(){
+        System.out.println();
+        System.out.println("1:edit item");
+        System.out.println("2:Delete Item");
+        System.out.println("3:Exit");
+        System.out.println("Choice");
+    }
+    public static void increaseDecreaseItem(){
+        System.out.println();
+        System.out.println("1:Increase item");
+        System.out.println("2:Decrease Item");
+        System.out.println("Choice");
+    }
 }

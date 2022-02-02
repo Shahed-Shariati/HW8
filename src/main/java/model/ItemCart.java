@@ -17,6 +17,16 @@ public class ItemCart {
         this.sum = sum;
     }
 
+    public ItemCart(Integer id,  Integer quantity, Double sum,Product product) {
+        this.id = id;
+        this.product = product;
+        this.quantity = quantity;
+        this.sum = sum;
+    }
+
+    public ItemCart() {
+    }
+
     public Integer getId() {
         return id;
     }
@@ -68,5 +78,16 @@ public class ItemCart {
     @Override
     public int hashCode() {
         return Objects.hash(product);
+    }
+
+    @Override
+    public String toString() {
+        return "ItemCart{" +
+                "id=" + id +
+                ", product=" + product.getName() +
+                ",price=" + product.getPrice() +
+                ", quantity=" + quantity +
+                ", sum=" + sum +
+                '}';
     }
 }

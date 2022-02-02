@@ -1,5 +1,7 @@
 package model;
 
+import utility.ProductStockException;
+
 import java.util.Objects;
 
 public class Product {
@@ -15,6 +17,13 @@ public class Product {
         this.price = price;
         this.stock = stock;
         this.category = category;
+    }
+
+    public Product(int id, String name, double price, int stock) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.stock = stock;
     }
 
     public int getId() {
@@ -46,7 +55,11 @@ public class Product {
     }
 
     public void setStock(int stock) {
-        this.stock = stock;
+        if( stock >= 0) {
+            this.stock = stock;
+        }else {
+            throw new ProductStockException();
+        }
     }
 
     public Category getCategory() {

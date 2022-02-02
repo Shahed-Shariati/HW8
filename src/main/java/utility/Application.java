@@ -157,8 +157,11 @@ public class Application {
                     addProductToShoppingCart(customer);
                     break;
                 case "3":
+                    showShoppingCartBtCustomerId(customer);
+                    editRemoveFromShoppingCart();
                     break;
                 case "4":
+                    showShoppingCartBtCustomerId(customer);
                     break;
                 case "5":
                     return;
@@ -254,7 +257,7 @@ public class Application {
              productService.upDate(product);
       }catch (NumberFormatException e){
           System.out.println("Id or stock is wrong");
-      }catch (ProductNotFound e){
+      }catch (ProductNotFoundException e){
           System.out.println("product not found");
       }
     }
@@ -270,8 +273,7 @@ public class Application {
             }
         }catch (NumberFormatException e){
             System.out.println("category id is wrong");
-        }catch (ProductListNotFoundException e){
-            System.out.println(e.getMessage());
+            return;
         }
     }
     private void showProducts(){
@@ -288,13 +290,15 @@ public class Application {
 
     }
      private void addProductToShoppingCart(Customer customer){
-      try {
 
-          ShoppingCart shoppingCart = new ShoppingCart(null, customer, 0);
+
+          ShoppingCart shoppingCart = new ShoppingCart(null, customer, 0,1);
           customer.getShoppingCarts().add(shoppingCart);
           int shoppingCartId = saveShoppingCart(shoppingCart);
           shoppingCart.setId(shoppingCartId);
           while (true) {
+              try {
+              showShoppingCart(shoppingCart);
               showParentCategory();
               showProductsByCategory();
               System.out.println("Choice product id to add shopping cart");
@@ -315,9 +319,8 @@ public class Application {
                       shoppingCart.getItemCarts().get(indexOfItemCart).setQuantity(newQuantity);
                       double newSum = shoppingCart.getItemCarts().get(indexOfItemCart).getSum() + sumItem;
                       shoppingCart.getItemCarts().get(indexOfItemCart).setSum(newSum);
-                    //  shoppingCart.setSum(shoppingCart.getSum() + newSum);
-                      itemCartService.upDate(shoppingCart.getItemCarts().get(indexOfItemCart));
-                      System.out.println(shoppingCart.getItemCarts().get(indexOfItemCart).getQuantity());
+                      itemCartUpdate(shoppingCart.getItemCarts().get(indexOfItemCart));
+                     // System.out.println(shoppingCart.getItemCarts().get(indexOfItemCart).getQuantity());
 
                   } else {
                       shoppingCart.getItemCarts().add(itemCart);
@@ -333,13 +336,23 @@ public class Application {
                   }
               }
 
-          }
-      }catch (NumberFormatException e){
-          System.out.println("Input is wrong");
-      }catch (ProductNotFound e){
-          System.out.println(e.getMessage());
-      }
+          }catch (NumberFormatException e){
+              System.out.println("Input is wrong");
+              continue;
+          }catch (ProductNotFoundException e){
+              System.out.println(e.getMessage());
+          }catch (ProductListNotFoundException e){
+                  System.out.println(e.getMessage());
+                  continue;
+          }catch (ProductStockException e){
+                  System.out.println(e.getMessage());
+              }
+        }
+
      }
+
+
+
      private int saveItemCart(ItemCart itemCart){
        return itemCartService.save(itemCart);
 
@@ -353,6 +366,137 @@ public class Application {
      private void shoppingCartUpdate(ShoppingCart shoppingCart)
      {
          shoppingService.upDate(shoppingCart);
+     }
+     private void itemCartUpdate(ItemCart itemCart){
+        itemCartService.upDate(itemCart);
+     }
+
+     private void showShoppingCart(ShoppingCart shoppingCart){
+         System.out.println("--------------------shopping cart---------------------");
+         for (ItemCart item:shoppingCart.getItemCarts()) {
+             System.out.println(item);
+         }
+         System.out.println("------------------------------------------------------------------------------");
+         System.out.println("Total                                                " + shoppingCart.getSum());
+         System.out.println("------------------------------------------------------------------------------");
+         System.out.println();
+     }
+     private void showShoppingCartBtCustomerId(Customer customer){
+        try {
+            List<ShoppingCart> shoppingCarts  =  shoppingService.findByCustomerId(customer.getId());
+            for (ShoppingCart item:shoppingCarts ) {
+                System.out.println(item);
+            }
+        }catch (ShoppingCartListNotFound e){
+            System.out.println(e.getMessage());
+        }
+
+     }
+     private void editRemoveFromShoppingCart(){
+         System.out.println("Enter id shopping cart");
+         try {
+             int shoppingCartId = Integer.parseInt(getUserInput());
+             ShoppingCart shoppingCart = shoppingService.find(shoppingCartId);
+             while (true){
+                 editRemove();
+                 String input = getUserInput();
+                 switch (input){
+                     case "1":
+                         editShoppingCartItem(shoppingCart);
+                         break;
+                     case "2":
+                         removeShoppingCartItem(shoppingCart);
+                         break;
+                     case "3":
+                         return;
+
+                 }
+             }
+
+         }catch (NumberFormatException e){
+             System.out.println("shopping cart is wrong");
+         }catch (ItemCartListNotFoundException e){
+             System.out.println(e.getMessage());
+         }
+
+     }
+
+     private void editShoppingCartItem(ShoppingCart shoppingCart){
+         showShoppingCart(shoppingCart);
+         try {
+             Product product;
+             double total = 0;
+             System.out.println("enter id item to edit");
+             int itemId = Integer.parseInt(getUserInput());
+             increaseDecreaseItem();
+             String input = getUserInput();
+             System.out.println("enter quantity to decrease");
+             int quantity = Integer.parseInt(getUserInput());
+             if(input.equalsIgnoreCase("1")){
+                 for (ItemCart item:shoppingCart.getItemCarts()) {
+                     if(item.getId() == itemId){
+                         item.setQuantity(item.getQuantity() + quantity);
+                         item.setSum(item.getProduct().getPrice() * item.getQuantity());
+                         product = item.getProduct();
+                         product.setStock(product.getStock() - quantity);
+                         item.setShoppingCart(shoppingCart);
+                         itemCartUpdate(item);
+                         productUpdate(product);
+                     }
+                     total = item.getSum();
+                 }
+             }else if(input.equalsIgnoreCase("2")){
+                 for (ItemCart item:shoppingCart.getItemCarts()) {
+                     if(item.getId() == itemId){
+                         item.setQuantity(item.getQuantity() - quantity);
+                         item.setSum(item.getProduct().getPrice() * item.getQuantity());
+                         product = item.getProduct();
+                         product.setStock(product.getStock() + quantity);
+                         item.setShoppingCart(shoppingCart);
+                         itemCartUpdate(item);
+                         productUpdate(product);
+                     }
+                     total = item.getSum();
+                 }
+             }
+
+
+             shoppingCart.setSum(total);
+             shoppingCartUpdate(shoppingCart);
+
+
+         }catch (NumberFormatException e){
+             System.out.println("Id is wrong");
+         }catch (ProductStockException e){
+             System.out.println(e.getMessage());
+         }
+
+     }
+     private void removeShoppingCartItem(ShoppingCart shoppingCart){
+        showShoppingCart(shoppingCart);
+        try {
+            double total = 0;
+            ItemCart itemCartRemove = new ItemCart();
+            Product product;
+            System.out.println("choice id to remove");
+            int itemId = Integer.parseInt(getUserInput());
+            for (ItemCart item:shoppingCart.getItemCarts()) {
+                if(item.getId() == itemId){
+                  itemCartRemove = item;
+                  product = item.getProduct();
+                  product.setStock(product.getStock() + item.getQuantity());
+                  productUpdate(product);
+                }else {
+                    total = item.getSum();
+                }
+            }
+            shoppingCart.setSum(total);
+            shoppingCart.getItemCarts().remove(itemCartRemove);
+            shoppingCartUpdate(shoppingCart);
+
+        }catch (NumberFormatException e){
+            System.out.println(" input Wrong");
+        }
      }
     private String getUserInput() {
         return input.nextLine().trim();

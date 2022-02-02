@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ItemCartRepository implements Repository<ItemCart>{
@@ -67,6 +68,34 @@ public class ItemCartRepository implements Repository<ItemCart>{
 
     @Override
     public List<ItemCart> findAll() {
+        return null;
+    }
+
+    public ArrayList<ItemCart> findAllByShoppingCartId(int id){
+        String query = """
+               SELECT * FROM itemcart i INNER JOIN product p on p.id = i.product_id
+               WHERE i.cart_id = ?;
+                """;
+        try {
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1,id);
+             ResultSet resultSet = preparedStatement.executeQuery();
+
+            ArrayList<ItemCart> itemCarts = new ArrayList<>();
+            while (resultSet.next()){
+                itemCarts.add(new ItemCart(resultSet.getInt(1),
+                        resultSet.getInt("quantity"),
+                        resultSet.getDouble("sum"),
+                          new Product(resultSet.getInt(6),
+                                resultSet.getString("product_name"),
+                                resultSet.getDouble("price"),
+                                resultSet.getInt("stock"))));
+
+            }
+            return itemCarts;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 }

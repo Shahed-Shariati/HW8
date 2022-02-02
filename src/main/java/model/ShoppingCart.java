@@ -7,12 +7,19 @@ public class ShoppingCart  {
     private Customer customer;
     private Double sum;
     private ArrayList<ItemCart> itemCarts;
+    private Integer status;
 
-    public ShoppingCart(Integer id, Customer customer, double sum) {
+    public ShoppingCart(Integer id, Customer customer, double sum,Integer status) {
         this.id = id;
         this.customer = customer;
         this.sum = sum;
         this.itemCarts = new ArrayList<>();
+        this.status = status;
+    }
+
+    public ShoppingCart(Integer id, Double sum) {
+        this.id = id;
+        this.sum = sum;
     }
 
     public Integer getId() {
@@ -45,5 +52,21 @@ public class ShoppingCart  {
 
     public void setItemCarts(ArrayList<ItemCart> itemCarts) {
         this.itemCarts = itemCarts;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        return "ShoppingCart{" +
+                "id=" + id +
+                ", sum=" + sum +
+                '}';
     }
 }

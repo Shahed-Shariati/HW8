@@ -133,6 +133,7 @@ public class CreateTable {
                   id SERIAL PRIMARY KEY,
                   customer_id INTEGER , 
                   total DOUBLE PRECISION,
+                  status INTEGER ,
                   FOREIGN KEY (customer_id) REFERENCES customer(id) ON DELETE CASCADE 
                   );     
                 """;

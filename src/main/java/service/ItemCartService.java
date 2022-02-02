@@ -2,8 +2,10 @@ package service;
 
 import model.ItemCart;
 import repository.ItemCartRepository;
+import utility.ItemCartListNotFoundException;
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ItemCartService implements Service<ItemCart>{
@@ -30,5 +32,12 @@ public class ItemCartService implements Service<ItemCart>{
     @Override
     public void upDate(ItemCart itemCart) {
       itemCartRepository.upDate(itemCart);
+    }
+    public ArrayList<ItemCart> findAllByShoppingCartId(int id){
+        ArrayList<ItemCart> itemCarts = itemCartRepository.findAllByShoppingCartId(id);
+        if(itemCarts == null || itemCarts.size() == 0){
+            throw new ItemCartListNotFoundException();
+        }
+        return itemCarts;
     }
 }

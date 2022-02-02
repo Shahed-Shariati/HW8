@@ -4,7 +4,7 @@ import model.Category;
 import model.Product;
 import repository.ProductRepository;
 import utility.ProductListNotFoundException;
-import utility.ProductNotFound;
+import utility.ProductNotFoundException;
 
 import java.sql.Connection;
 import java.util.List;
@@ -33,9 +33,10 @@ public class ProductService implements Service<Product>{
     public Product find(int id) {
 
         Product product = productRepository.find(id);
-        if(product == null){
-            throw new ProductNotFound();
+        if(product == null || product.getId() == 0){
+            throw new ProductNotFoundException();
         }
+
         return product;
     }
 
@@ -52,6 +53,9 @@ public class ProductService implements Service<Product>{
     public List<Product> findAllByCategoryId(int id){
         List<Product> productList = productRepository.findAllByCategoryId(id);
         if(productList == null){
+            throw new ProductListNotFoundException();
+        }
+        if(productList.isEmpty()){
             throw new ProductListNotFoundException();
         }
         return productList;

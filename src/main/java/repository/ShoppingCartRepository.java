@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ShoppingCartRepository implements Repository<ShoppingCart>{
@@ -19,12 +20,13 @@ public class ShoppingCartRepository implements Repository<ShoppingCart>{
     @Override
     public int save(ShoppingCart shoppingCart) {
         String query = """
-                INSERT INTO shopping (customer_id,total) VALUES (?,?) RETURNING id;
+                INSERT INTO shopping (customer_id,total,status) VALUES (?,?,?) RETURNING id;
                 """;
         try {
             preparedStatement = connection.prepareStatement(query);
             preparedStatement.setInt(1,shoppingCart.getCustomer().getId());
             preparedStatement.setDouble(2,shoppingCart.getSum());
+            preparedStatement.setInt(3,shoppingCart.getStatus());
             ResultSet resultSet = preparedStatement.executeQuery();
             if(resultSet.next()){
                 return resultSet.getInt(1);
@@ -57,11 +59,45 @@ public class ShoppingCartRepository implements Repository<ShoppingCart>{
 
     @Override
     public ShoppingCart find(int id) {
+        String query = """
+                SELECT * FROM shopping WHERE id = ?;
+                """;
+        try {
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1,id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if(resultSet.next()) {
+                return new ShoppingCart(resultSet.getInt("id"),
+                        resultSet.getDouble("total"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 
     @Override
     public List<ShoppingCart> findAll() {
+        return null;
+    }
+
+    public List<ShoppingCart>  findByCustomerId(int id){
+        String query = """
+                SELECT * FROM shopping WHERE customer_id = ? AND status = 1 ;
+                """;
+        try {
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1,id);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            List<ShoppingCart> shoppingCarts = new ArrayList<>();
+            while (resultSet.next()){
+                shoppingCarts.add(new ShoppingCart(resultSet.getInt("id"),
+                                  resultSet.getDouble("total")));
+            }
+            return shoppingCarts;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 }
