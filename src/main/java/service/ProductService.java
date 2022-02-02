@@ -34,7 +34,7 @@ public class ProductService implements Service<Product>{
 
         Product product = productRepository.find(id);
         if(product == null){
-            throw new ProductNotFound("Product not found");
+            throw new ProductNotFound();
         }
         return product;
     }

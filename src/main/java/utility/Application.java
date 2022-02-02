@@ -21,6 +21,7 @@ public class Application {
     private CategoryService categoryService = new CategoryService(connection);
     private ProductService productService = new ProductService(connection);
     private ShoppingService shoppingService = new ShoppingService(connection);
+    private ItemCartService itemCartService = new ItemCartService(connection);
 
     public Application() {
 
@@ -287,23 +288,71 @@ public class Application {
 
     }
      private void addProductToShoppingCart(Customer customer){
+      try {
 
-        ShoppingCart shoppingCart = new ShoppingCart(null,customer,0);
-        customer.getShoppingCarts().add(shoppingCart);
-        int shoppingCartId = shoppingService.save(shoppingCart);
-        while (true) {
-            showParentCategory();
-            showProductsByCategory();
-            System.out.println("you want continue Y/n");
-            String input = getUserInput();
-            if(input.equalsIgnoreCase("n")){
-                return;
-            }
-        }
+          ShoppingCart shoppingCart = new ShoppingCart(null, customer, 0);
+          customer.getShoppingCarts().add(shoppingCart);
+          int shoppingCartId = saveShoppingCart(shoppingCart);
+          shoppingCart.setId(shoppingCartId);
+          while (true) {
+              showParentCategory();
+              showProductsByCategory();
+              System.out.println("Choice product id to add shopping cart");
+              Integer productId = Integer.parseInt(getUserInput());
+              Product product = productService.find(productId);
+              System.out.println("Enter product quantity");
+              Integer quantity = Integer.parseInt(getUserInput());
+              if (quantity > product.getStock()) {
+                  System.out.println("out of range");
+              }else{
+                  product.setStock(product.getStock() - quantity);
+                  Double sumItem = product.getPrice() * quantity;
+                  ItemCart itemCart = new ItemCart(null, product, shoppingCart, quantity, sumItem);
+                  shoppingCart.setSum(shoppingCart.getSum() + sumItem);
+                  if (shoppingCart.getItemCarts().contains(itemCart)) {
+                      int indexOfItemCart=shoppingCart.getItemCarts().indexOf(itemCart);
+                      int newQuantity = shoppingCart.getItemCarts().get(indexOfItemCart).getQuantity() + quantity;
+                      shoppingCart.getItemCarts().get(indexOfItemCart).setQuantity(newQuantity);
+                      double newSum = shoppingCart.getItemCarts().get(indexOfItemCart).getSum() + sumItem;
+                      shoppingCart.getItemCarts().get(indexOfItemCart).setSum(newSum);
+                    //  shoppingCart.setSum(shoppingCart.getSum() + newSum);
+                      itemCartService.upDate(shoppingCart.getItemCarts().get(indexOfItemCart));
+                      System.out.println(shoppingCart.getItemCarts().get(indexOfItemCart).getQuantity());
+
+                  } else {
+                      shoppingCart.getItemCarts().add(itemCart);
+                      saveItemCart(itemCart);
+                  }
+
+                  productUpdate(product);
+                  shoppingCartUpdate(shoppingCart);
+                  System.out.println("you want continue and add product to shopping list Y/n");
+                  String input = getUserInput();
+                  if (input.equalsIgnoreCase("n")) {
+                      return;
+                  }
+              }
+
+          }
+      }catch (NumberFormatException e){
+          System.out.println("Input is wrong");
+      }catch (ProductNotFound e){
+          System.out.println(e.getMessage());
+      }
      }
+     private int saveItemCart(ItemCart itemCart){
+       return itemCartService.save(itemCart);
 
-     private void addShoppingCart(){
-
+     }
+     private int saveShoppingCart(ShoppingCart shoppingCart){
+         return shoppingService.save(shoppingCart);
+     }
+     private void productUpdate(Product product){
+        productService.upDate(product);
+     }
+     private void shoppingCartUpdate(ShoppingCart shoppingCart)
+     {
+         shoppingService.upDate(shoppingCart);
      }
     private String getUserInput() {
         return input.nextLine().trim();

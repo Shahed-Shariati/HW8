@@ -15,9 +15,6 @@ public class ShoppingService implements Service<ShoppingCart>{
         this.shoppingCartRepository = new ShoppingCartRepository(connection);
     }
 
-    public int save(ShoppingCart shoppingCart){
-       return  shoppingCartRepository.save(shoppingCart);
-      }
 
 
 
@@ -33,6 +30,11 @@ public class ShoppingService implements Service<ShoppingCart>{
 
     @Override
     public void upDate(ShoppingCart shoppingCart) {
-
+      shoppingCartRepository.upDate(shoppingCart);
     }
+    public int save(ShoppingCart shoppingCart){
+        return  shoppingCartRepository.save(shoppingCart);
+    }
+
+
 }

@@ -37,7 +37,17 @@ public class ShoppingCartRepository implements Repository<ShoppingCart>{
 
     @Override
     public void upDate(ShoppingCart shoppingCart) {
-
+     String query = """
+             UPDATE shopping SET  total = ? WHERE id = ?;
+             """;
+        try {
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setDouble(1,shoppingCart.getSum());
+            preparedStatement.setInt(2,shoppingCart.getId());
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
