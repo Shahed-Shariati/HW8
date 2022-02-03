@@ -54,7 +54,17 @@ public class CustomerRepository implements Repository<Customer>{
 
     @Override
     public void upDate(Customer customer) {
-
+      String query = """
+              UPDATE customer set balance = ? WHERE id = ?;
+              """;
+        try {
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setDouble(1,customer.getBalance());
+            preparedStatement.setDouble(2,customer.getId());
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

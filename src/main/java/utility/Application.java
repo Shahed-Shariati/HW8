@@ -4,7 +4,6 @@ package utility;
 
 import database.DatabaseConnection;
 import model.*;
-import repository.ItemOrderRepository;
 import service.*;
 
 import java.sql.Connection;
@@ -141,7 +140,7 @@ public class Application {
                     break;
                 case "5":
                    showParentCategory();
-                   showProductsByCategory();
+                   showProductsByParentCategory();
                 case "6":
                     return;
             }
@@ -155,6 +154,7 @@ public class Application {
             switch (input){
                 case "1":
                    showParentCategory();
+                    showProductsByParentCategory();
                     break;
                 case "2":
                     addProductToShoppingCart(customer);
@@ -246,7 +246,7 @@ public class Application {
     }
 
     private void editProduct(){
-      showProductsByCategory();
+      showProductsByParentCategory();
       try {
           System.out.println("choice id product to edit");
           int productId = Integer.parseInt(getUserInput());
@@ -264,7 +264,7 @@ public class Application {
           System.out.println("product not found");
       }
     }
-    private void showProductsByCategory(){
+    private void showProductsByParentCategory(){
         try{
             System.out.println("choice id category");
             String categoryId = getUserInput();
@@ -303,7 +303,7 @@ public class Application {
               try {
               showShoppingCart(shoppingCart);
               showParentCategory();
-              showProductsByCategory();
+              showProductsByParentCategory();
               System.out.println("Choice product id to add shopping cart");
               Integer productId = Integer.parseInt(getUserInput());
               Product product = productService.find(productId);
@@ -335,6 +335,7 @@ public class Application {
                   System.out.println("you want continue and add product to shopping list Y/n");
                   String input = getUserInput();
                   if (input.equalsIgnoreCase("n")) {
+                      showShoppingCart(shoppingCart);
                       return;
                   }
               }
@@ -512,13 +513,15 @@ public class Application {
              int shoppingCartId = Integer.parseInt(getUserInput());
              ShoppingCart shoppingCart = shoppingService.find(shoppingCartId);
              showShoppingCart(shoppingCart);
-             System.out.println("Do you want confirm");
+             System.out.println("your balance is                 " + customer.getBalance());
+             System.out.println("Do you want confirm y/n");
              String input = getUserInput();
              if(input.equalsIgnoreCase("y")){
                  if(shoppingCart.getSum() < customer.getBalance()) {
                      confirm(shoppingCart,customer);
                      double newBalance = customer.getBalance() - shoppingCart.getSum();
                      customer.setBalance(newBalance);
+                     customerUpDate(customer);
                  }else{
                      System.out.println("your balance is not enough");
                  }
@@ -555,7 +558,7 @@ public class Application {
         }
     }
     private void customerUpDate(Customer customer){
-
+      customerService.upDate(customer);
     }
     private String getUserInput() {
         return input.nextLine().trim();

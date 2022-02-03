@@ -8,16 +8,16 @@ public class CreateTable {
     private static Connection connection = DatabaseConnection.getInstance().getConnection();
     private static PreparedStatement preparedStatement;
     public CreateTable(){
-    //createTableRole();
-   // createTableUser();
-  //  insertIntoRole();
-  //  createTableCustomer();
-   // createTableCategory();
-    //  createTableProduct();
-     //   createTableShoppingCart();
-       //  createTableItemCart();
-      //  createTableOrder();
-        createTableItemOrder();
+   createTableRole();
+   createTableUser();
+   insertIntoRole();
+   createTableCustomer();
+   createTableCategory();
+   createTableProduct();
+   createTableShoppingCart();
+   createTableItemCart();
+   createTableOrder();
+   createTableItemOrder();
     }
 
 

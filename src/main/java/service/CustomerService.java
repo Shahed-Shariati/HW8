@@ -52,7 +52,7 @@ public class CustomerService implements Service<Customer> {
 
     @Override
     public void upDate(Customer customer) {
-
+       customerRepository.upDate(customer);
     }
 
     @Override

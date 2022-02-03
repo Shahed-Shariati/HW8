@@ -10,8 +10,8 @@ WHERE u.id = 2
 select * from shopping;
 
 
-ALTER SEQUENCE itemorder_id_seq RESTART WITH 1;
-ALTER SEQUENCE orders_id_seq RESTART WITH 1;
+ALTER SEQUENCE itemcart_id_seq RESTART WITH 1;
+ALTER SEQUENCE shopping_id_seq RESTART WITH 1;
 
 
 SELECT i.id,p.product_name,p.price,i.quantity,i.sum FROM shopping s INNER JOIN itemcart i on s.id = i.cart_id
