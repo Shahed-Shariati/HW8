@@ -40,12 +40,13 @@ public class ShoppingCartRepository implements Repository<ShoppingCart>{
     @Override
     public void upDate(ShoppingCart shoppingCart) {
      String query = """
-             UPDATE shopping SET  total = ? WHERE id = ?;
+             UPDATE shopping SET  total = ?,status = ? WHERE id = ?;
              """;
         try {
             preparedStatement = connection.prepareStatement(query);
             preparedStatement.setDouble(1,shoppingCart.getSum());
-            preparedStatement.setInt(2,shoppingCart.getId());
+            preparedStatement.setInt(2,shoppingCart.getStatus());
+            preparedStatement.setInt(3,shoppingCart.getId());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -68,7 +69,8 @@ public class ShoppingCartRepository implements Repository<ShoppingCart>{
             ResultSet resultSet = preparedStatement.executeQuery();
             if(resultSet.next()) {
                 return new ShoppingCart(resultSet.getInt("id"),
-                        resultSet.getDouble("total"));
+                           resultSet.getDouble("total"),
+                        resultSet.getInt("status"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -92,7 +94,8 @@ public class ShoppingCartRepository implements Repository<ShoppingCart>{
             List<ShoppingCart> shoppingCarts = new ArrayList<>();
             while (resultSet.next()){
                 shoppingCarts.add(new ShoppingCart(resultSet.getInt("id"),
-                                  resultSet.getDouble("total")));
+                                  resultSet.getDouble("total"),
+                                  resultSet.getInt("status")));
             }
             return shoppingCarts;
         } catch (SQLException e) {

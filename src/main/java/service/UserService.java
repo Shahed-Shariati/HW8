@@ -56,4 +56,9 @@ public class UserService implements Service<User>{
     public void upDate(User user) {
 
     }
+
+    @Override
+    public void delete(int id) {
+
+    }
 }

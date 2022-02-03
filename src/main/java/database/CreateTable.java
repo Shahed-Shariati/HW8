@@ -14,8 +14,10 @@ public class CreateTable {
   //  createTableCustomer();
    // createTableCategory();
     //  createTableProduct();
-        createTableShoppingCart();
-         createTableItemCart();
+     //   createTableShoppingCart();
+       //  createTableItemCart();
+      //  createTableOrder();
+        createTableItemOrder();
     }
 
 
@@ -167,9 +169,43 @@ public class CreateTable {
     }
 
 
+   private void createTableOrder(){
+        String query = """
+                CREATE TABLE IF NOT EXISTS Orders(
+                  id SERIAL PRIMARY KEY,
+                  customer_id INTEGER , 
+                  total DOUBLE PRECISION,
+                  status VARCHAR(50) ,
+                  FOREIGN KEY (customer_id) REFERENCES customer(id) ON DELETE CASCADE 
+                  );     
+                """;
+       try {
+           preparedStatement = connection.prepareStatement(query);
+           preparedStatement.execute();
+       } catch (SQLException e) {
+           e.printStackTrace();
+       }
+   }
 
-
-
+    private void createTableItemOrder(){
+        String query = """
+                  CREATE TABLE IF NOT EXISTS itemorder(
+                  id SERIAL PRIMARY KEY,
+                  product_id INTEGER , 
+                  order_id INTEGER ,
+                  quantity INTEGER ,
+                  sum DOUBLE PRECISION,
+                  FOREIGN KEY (product_id) REFERENCES product(id) ON DELETE CASCADE, 
+                  FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE 
+                  );     
+                """;
+        try {
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     }
 

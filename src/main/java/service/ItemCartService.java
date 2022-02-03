@@ -33,6 +33,12 @@ public class ItemCartService implements Service<ItemCart>{
     public void upDate(ItemCart itemCart) {
       itemCartRepository.upDate(itemCart);
     }
+
+    @Override
+    public void delete(int id) {
+        itemCartRepository.delete(id);
+    }
+
     public ArrayList<ItemCart> findAllByShoppingCartId(int id){
         ArrayList<ItemCart> itemCarts = itemCartRepository.findAllByShoppingCartId(id);
         if(itemCarts == null || itemCarts.size() == 0){
@@ -40,4 +46,5 @@ public class ItemCartService implements Service<ItemCart>{
         }
         return itemCarts;
     }
+
 }

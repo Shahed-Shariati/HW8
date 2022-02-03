@@ -1,18 +1,21 @@
 package service;
 
+import model.ItemCart;
+import model.ItemOrder;
 import model.Order;
+import repository.ItemOrderRepository;
 import repository.OrderRepository;
 
 import java.sql.Connection;
 import java.util.List;
 
-public class OrderService implements Service<Order> {
+public class ItemOrderService implements Service<Order> {
     private Connection connection;
-    private OrderRepository orderRepository;
+    private ItemOrderRepository itemOrderRepository;
 
-    public OrderService(Connection connection) {
+    public ItemOrderService(Connection connection) {
         this.connection = connection;
-        orderRepository = new OrderRepository(this.connection);
+       this.itemOrderRepository = new ItemOrderRepository(this.connection);
     }
 
     @Override
@@ -34,8 +37,8 @@ public class OrderService implements Service<Order> {
     public void delete(int id) {
 
     }
-    public int save(Order order){
-      return  orderRepository.save(order);
-
+    public int save(ItemOrder itemOrder){
+        return itemOrderRepository.save(itemOrder);
     }
+
 }

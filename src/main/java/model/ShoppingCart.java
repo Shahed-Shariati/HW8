@@ -17,9 +17,10 @@ public class ShoppingCart  {
         this.status = status;
     }
 
-    public ShoppingCart(Integer id, Double sum) {
+    public ShoppingCart(Integer id, Double sum,Integer status) {
         this.id = id;
         this.sum = sum;
+        this.status = status;
     }
 
     public Integer getId() {

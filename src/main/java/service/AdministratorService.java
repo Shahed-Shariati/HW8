@@ -1,8 +1,11 @@
 package service;
 
-import java.sql.Connection;
+import model.Administrator;
 
-public class AdministratorService {
+import java.sql.Connection;
+import java.util.List;
+
+public class AdministratorService implements Service<Administrator>{
     private CategoryService categoryService;
 
     public AdministratorService(Connection connection)
@@ -17,6 +20,26 @@ public class AdministratorService {
 
     public int saveSubCategory(String id,String categoryName,String parentId){
         return categoryService.save(id,categoryName,parentId);
+
+    }
+
+    @Override
+    public Administrator find(int id) {
+        return null;
+    }
+
+    @Override
+    public List<Administrator> findAll() {
+        return null;
+    }
+
+    @Override
+    public void upDate(Administrator administrator) {
+
+    }
+
+    @Override
+    public void delete(int id) {
 
     }
 }

@@ -41,6 +41,12 @@ public class ShoppingService implements Service<ShoppingCart>{
     public void upDate(ShoppingCart shoppingCart) {
       shoppingCartRepository.upDate(shoppingCart);
     }
+
+    @Override
+    public void delete(int id) {
+
+    }
+
     public int save(ShoppingCart shoppingCart){
         return  shoppingCartRepository.save(shoppingCart);
     }

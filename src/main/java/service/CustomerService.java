@@ -54,4 +54,9 @@ public class CustomerService implements Service<Customer> {
     public void upDate(Customer customer) {
 
     }
+
+    @Override
+    public void delete(int id) {
+
+    }
 }

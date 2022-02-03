@@ -24,7 +24,7 @@ public class Menu {
         System.out.println();
         System.out.println("1:Show products list");
         System.out.println("2:Add product to shopping list");
-        System.out.println("3:remove from shopping list");
+        System.out.println("3:Edit shopping cart");
         System.out.println("4:confirm");
         System.out.println("5:Exit");
     }

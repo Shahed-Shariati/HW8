@@ -50,6 +50,11 @@ public class ProductService implements Service<Product>{
         productRepository.upDate(product);
     }
 
+    @Override
+    public void delete(int id) {
+
+    }
+
     public List<Product> findAllByCategoryId(int id){
         List<Product> productList = productRepository.findAllByCategoryId(id);
         if(productList == null){

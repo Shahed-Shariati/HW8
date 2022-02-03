@@ -58,7 +58,16 @@ public class ItemCartRepository implements Repository<ItemCart>{
 
     @Override
     public void delete(int id) {
-
+     String query = """
+             DELETE FROM itemcart WHERE id = ?;
+             """;
+        try {
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1,id);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

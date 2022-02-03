@@ -4,11 +4,13 @@ package utility;
 
 import database.DatabaseConnection;
 import model.*;
+import repository.ItemOrderRepository;
 import service.*;
 
 import java.sql.Connection;
 import static utility.Menu.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -22,7 +24,8 @@ public class Application {
     private ProductService productService = new ProductService(connection);
     private ShoppingService shoppingService = new ShoppingService(connection);
     private ItemCartService itemCartService = new ItemCartService(connection);
-
+    private OrderService orderService = new OrderService(connection);
+    private ItemOrderService itemOrderService = new ItemOrderService(connection);
     public Application() {
 
         runApplication();
@@ -157,11 +160,11 @@ public class Application {
                     addProductToShoppingCart(customer);
                     break;
                 case "3":
-                    showShoppingCartBtCustomerId(customer);
+                    findShoppingCartBtCustomerId(customer);
                     editRemoveFromShoppingCart();
                     break;
                 case "4":
-                    showShoppingCartBtCustomerId(customer);
+                   confirmShoppingCart(customer);
                     break;
                 case "5":
                     return;
@@ -381,7 +384,7 @@ public class Application {
          System.out.println("------------------------------------------------------------------------------");
          System.out.println();
      }
-     private void showShoppingCartBtCustomerId(Customer customer){
+     private void findShoppingCartBtCustomerId(Customer customer){
         try {
             List<ShoppingCart> shoppingCarts  =  shoppingService.findByCustomerId(customer.getId());
             for (ShoppingCart item:shoppingCarts ) {
@@ -443,7 +446,7 @@ public class Application {
                          itemCartUpdate(item);
                          productUpdate(product);
                      }
-                     total = item.getSum();
+                     total = total + item.getSum();
                  }
              }else if(input.equalsIgnoreCase("2")){
                  for (ItemCart item:shoppingCart.getItemCarts()) {
@@ -456,7 +459,7 @@ public class Application {
                          itemCartUpdate(item);
                          productUpdate(product);
                      }
-                     total = item.getSum();
+                     total = total + item.getSum();
                  }
              }
 
@@ -486,8 +489,9 @@ public class Application {
                   product = item.getProduct();
                   product.setStock(product.getStock() + item.getQuantity());
                   productUpdate(product);
+                  removeItem(item);
                 }else {
-                    total = item.getSum();
+                    total = total + item.getSum();
                 }
             }
             shoppingCart.setSum(total);
@@ -498,6 +502,61 @@ public class Application {
             System.out.println(" input Wrong");
         }
      }
+     private void removeItem(ItemCart itemCart){
+        itemCartService.delete(itemCart.getId());
+     }
+     private void confirmShoppingCart(Customer customer){
+        findShoppingCartBtCustomerId(customer);
+         System.out.println("choice shopping cart");
+         try {
+             int shoppingCartId = Integer.parseInt(getUserInput());
+             ShoppingCart shoppingCart = shoppingService.find(shoppingCartId);
+             showShoppingCart(shoppingCart);
+             System.out.println("Do you want confirm");
+             String input = getUserInput();
+             if(input.equalsIgnoreCase("y")){
+                 if(shoppingCart.getSum() < customer.getBalance()) {
+                     confirm(shoppingCart,customer);
+                     double newBalance = customer.getBalance() - shoppingCart.getSum();
+                     customer.setBalance(newBalance);
+                 }else{
+                     System.out.println("your balance is not enough");
+                 }
+             }else if(input.equalsIgnoreCase("n")){
+                 System.out.println();
+             }else {
+                 System.out.println("input is wrong");
+             }
+         }catch (NumberFormatException e){
+             System.out.println(" input is wrong");
+         }catch (ShoppingCartNotFound e){
+             System.out.println("Shopping cart not found");
+         }
+    }
+    private void confirm(ShoppingCart shoppingCart,Customer customer){
+        Order order  = new Order(null,customer,shoppingCart.getSum(),"Pending");
+        int orderId = saveOrder(order);
+        order.setId(orderId);
+        ArrayList<ItemOrder> itemOrders = new ArrayList<>();
+        for (ItemCart item:shoppingCart.getItemCarts()) {
+            itemOrders.add(new ItemOrder(null,item.getProduct(),order,item.getQuantity(),item.getSum()));
+        }
+        order.setItemOrders(itemOrders);
+        saveOrderItem(order.getItemOrders());
+        shoppingCart.setStatus(0);
+        shoppingCartUpdate(shoppingCart);
+    }
+    private int saveOrder(Order order){
+       return orderService.save(order);
+    }
+    private void saveOrderItem(List<ItemOrder> itemOrders){
+        for (ItemOrder item:itemOrders) {
+         itemOrderService.save(item);
+        }
+    }
+    private void customerUpDate(Customer customer){
+
+    }
     private String getUserInput() {
         return input.nextLine().trim();
     }
