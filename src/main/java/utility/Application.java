@@ -141,6 +141,7 @@ public class Application {
                 case "5":
                    showParentCategory();
                    showProductsByParentCategory();
+                   break;
                 case "6":
                     return;
             }
@@ -386,14 +387,12 @@ public class Application {
          System.out.println();
      }
      private void findShoppingCartBtCustomerId(Customer customer){
-        try {
+
             List<ShoppingCart> shoppingCarts  =  shoppingService.findByCustomerId(customer.getId());
             for (ShoppingCart item:shoppingCarts ) {
                 System.out.println(item);
             }
-        }catch (ShoppingCartListNotFound e){
-            System.out.println(e.getMessage());
-        }
+
 
      }
      private void editRemoveFromShoppingCart(){
@@ -507,9 +506,10 @@ public class Application {
         itemCartService.delete(itemCart.getId());
      }
      private void confirmShoppingCart(Customer customer){
-        findShoppingCartBtCustomerId(customer);
-         System.out.println("choice shopping cart");
+
          try {
+             findShoppingCartBtCustomerId(customer);
+             System.out.println("choice shopping cart");
              int shoppingCartId = Integer.parseInt(getUserInput());
              ShoppingCart shoppingCart = shoppingService.find(shoppingCartId);
              showShoppingCart(shoppingCart);
@@ -533,7 +533,11 @@ public class Application {
          }catch (NumberFormatException e){
              System.out.println(" input is wrong");
          }catch (ShoppingCartNotFound e){
-             System.out.println("Shopping cart not found");
+             System.out.println(e.getMessage());
+         }catch (ItemCartListNotFoundException e){
+             System.out.println(e.getMessage());
+         }catch (ShoppingCartListNotFound e){
+             System.out.println(e.getMessage());
          }
     }
     private void confirm(ShoppingCart shoppingCart,Customer customer){
